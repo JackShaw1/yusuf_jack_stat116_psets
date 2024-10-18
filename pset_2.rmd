@@ -61,30 +61,139 @@ The [National Health and Nutrition Examination Survey (NHANES)](https://www.cdc.
  - **bmi**: [body mass index](https://en.wikipedia.org/wiki/Body_mass_index), in $kg/m^2$.
  - **activity**: a categorical variable for level of weekly activity (walking or more rigorous) with 1 = less than 30 minutes per week, 2 = 30 to 89 minutes per week , 3 = 90 to 179 minutes per week, and 4 = at least 180 minutes per week.
 
+**Problem 2: Just a DASH** 
+
+The [Dietary Approaches to Stop Hypertension (DASH) Diet](https://www.nhlbi.nih.gov/education/dash-eating-plan) is a *heart healthy* diet that research has suggested may have health benefits such as lowering blood pressure, improving blood lipid levels, helping people lose weight, and reducing the risk of Type 2 diabetes and heart disease.
+
+The [National Health and Nutrition Examination Survey (NHANES)](https://www.cdc.gov/nchs/nhanes/index.htm) is a collection of observational studies with the goal of measuring and monitoring health statistics across the country.  A subset of this data set has been curated and wrangled to assess whether Americans on the DASH diet may have a lower mortality rate as well.  A portion of this curated data set has been provided to you in the file `dash.csv`, which include the following variables:
+
+ - **time**: follow-up time until event (either censoring or death)
+ - **status**: a binary indicator where 1 = death ([all-cause mortality](https://www.cancer.gov/publications/dictionaries/cancer-terms/def/all-cause-mortality)) vs. 0 = censored (due to the end of the study).
+ - **diet**: a binary indicator of whether the patient is considered to be on the DASH Diet based on their nutritional survey responses.
+  - **age**: age, in years
+ - **sex**: a binary indicator where 1 = Female and 0 = Male.
+ - **race**: self-reported primary race and ethnicity: 1 = Non-Hispanic White, 2 = Non-Hispanic Black, 1 = Hispanic, or 4 = Other or Multi-racial
+ - **bp**: diastolic blood pressure measured at time of enrollment
+ - **mi**: a binary indicator of whether respondent has had a myocardial infarction before enrollment (heart attack) 
+ - **chf**: a binary indicator of whether respondent has [congestive heart failure](https://my.clevelandclinic.org/health/diseases/17069-heart-failure-understanding-heart-failure) at time of enrollment 
+ - **bmi**: [body mass index](https://en.wikipedia.org/wiki/Body_mass_index), in $kg/m^2$.
+ - **activity**: a categorical variable for level of weekly activity (walking or more rigorous) with 1 = less than 30 minutes per week, 2 = 30 to 89 minutes per week , 3 = 90 to 179 minutes per week, and 4 = at least 180 minutes per week.
+
 Use this data set to answer the following questions:
  
-```{r,echo=F}
+```{r}
 #make sure you remove the `echo=F` chunk option above in your answers
 library(survival)
-dash = read.csv("data/dash.csv")
+dash = read.csv("dash.csv")
+library(tidyverse)
 ```
 
 (a) Who's more likely to be on the DASH `diet`?  Answer this question with regards to `race`, `age`, `bmi`, and `mi`.  Please provide visuals and/or summary statistics to address this question -- there is no need to formalize this with CIs or hypothesis test.  Summarize what you find in 4 or fewer sentences.
 
+```{r}
+prop.table(table(dash$race, dash$diet),margin=2)
+
+
+by(dash$age,dash$diet,summary)
+
+by(dash$bmi,dash$diet,summary)
+
+prop.table(table(dash$mi, dash$diet),margin=2)
+
+```
+
+For race, we can see that the Dash diet group has a larger proportion of Hispanic,White, and Multiracial people and a much lower proportion of Black people than the non-Dash diet group. For age, we can see that the two groups are roughly similar, although the dash diet group is a little bit older in general. For BMI, we can see that the Dash diet seems to have slightly lower mean amd median BMI than the non-DASH diet group and also a much lower Max. For MI, we can see that the two groups are roughly the same (the Dash diet has a slightly higher proportion of people who have had Myocardial Infarction).  
+
 (b) Plot the 2 empirical survival curves on the same graph (same set of axes): (i) for those on the DASH diet and (ii) for those not on the DASH diet.  Interpret what you notice in 4 or fewer sentences.
+
+```{r}
+kapmei <- survfit(Surv(time,status)~diet,data=dash)
+plot(survfit(Surv(time,status)~diet,data=dash),col=c("red","blue"))
+```
+As we can see, as time progresses the Dash diet group curve is consistently above the other curve, suggesting they do have a higher probability of survivial. This difference is more pronounced towards the end. 
 
 (c) Use a log-rank test to determine whether there is evidence of a true difference in the survival function comparing those on the DASH diet vs. those not on the DASH diet.  Perform a formal hypothesis test at the $\alpha = 0.05$ level and provide an associated and interpretable confidence interval for assessing these hypotheses. 
 
+```{r}
+survdiff(Surv(time,status)~diet,data=dash)
+
+summary(coxph(Surv(time, status) ~ diet, data = dash))
+```
+
+As we can see, our p-value is 0.08 and therefore we fail to reject the null hypothesis and there is not a statistically significant different in survival between the two groups. This is also seen in our confidence interval, 0.666 to 1.022, which contains 1 and therefore represents that there is not a statistically significant difference between the two groups.   
+
+
 (d) It is thought that those at high-risk for cardiac events -- as measured by a history of myocardial infarction (`mi`), congestive heart failure (`chf`), or elevated blood pressure (`bp`) -- are more likely to be on the DASH diet due to doctor's recommendation, and are expected to have higher all cause mortality rates due to their conditions.  Use a Cox Proportional Hazards model  (call it `cox1`) to assess whether there is an association of survival with `diet` after controlling for these 3 factors.  Summarize what you notice in 4 or fewer sentences.
+
+```{r}
+cox1 <- coxph(Surv(time, status) ~ diet + mi + chf + bp, data = dash)
+summary(cox1)
+```
+As we can see in the output, our p-value is now low and  we can reject the null. This tells us that after controlling for mi, chf, and bp, the dash diet is statistically significantly positively associated with survival. This is confirmed by our confidence interval, which now no lonnger contains 1, and our p-values. We can also see that all three of our covariates are statistically significant when controlling for the other covariates and diet.  
 
 
 (e) There are potentially other measured factors that may be confounding this relationship as well (`age`, `sex`, `race`, `bmi`, and `activity`).  Use a Cox Proportional Hazards model (`cox2`) to assess whether there is an association of survival with `diet` after controlling for the 8 mentioned covariates (the 5 listed here and the 3 from the previous part).  Summarize what you notice in 4 or fewer sentences.
 
+```{r}
+cox2 <- coxph(Surv(time, status) ~ diet + mi + chf + bp + age + sex + race + bmi + activity, data = dash)
+summary(cox2)
+
+```
+
+As we can see, our p-value for the diet variable is above 0.05 and therefore we fail to reject the null. We can not conclude that there is a statistically significant association between the Dash diet and survival when controlling for all 8 of these covariates of interest. However, a lot of these covariates are statistically significant when controlling for the others (all except bp). 
+
 (f) Assess the proportional hazards assumptions in `cox2` using diagnostic plots (hint, the R function `cox.zph` may be helpful).  Comments on what you notice in 4 or fewer sentences.
+
+```{r}
+cox.zph(cox2)
+plot(cox.zph(cox2))
+```
+
+INTERPRET
+
 
 (g) For the `cox2` model, provide two estimated survival curves for the *prototypical* subject in the dataset: one curve if they are on the DASH diet and a second curve if they are not on the DASH diet.  Note: this *prototypical* subject should have the median value for all numeric covariates and the most common response for all categorical covariates other than `diet`. 
 
+```{r}
+library(DescTools)
+prototypical_dash <- data.frame(
+  diet = factor(1,levels=c(0,1)),
+  mi = Mode(dash$mi),
+  chf = Mode(dash$chf),
+  bp = median(dash$bp),
+  age = median(dash$age),
+  sex = Mode(dash$sex),
+  race = Mode(dash$race),
+  bmi = median(dash$bmi),
+  activity = Mode(dash$activity)
+)
+
+prototypical_nodash <- data.frame(
+  diet = factor(0,levels=c(0,1)),
+  mi = Mode(dash$mi),
+  chf = Mode(dash$chf),
+  bp = median(dash$bp),
+  age = median(dash$age),
+  sex = Mode(dash$sex),
+  race = Mode(dash$race),
+  bmi = median(dash$bmi),
+  activity = Mode(dash$activity)
+)
+
+dash_curve <- survfit(cox2, newdata = prototypical_dash)
+nodash_curve <- survfit(cox2, newdata = prototypical_nodash)
+
+plot(dash_curve, col = "blue", lty = 1, xlab = "Time", ylab = "Survival Probability", 
+     main = "Survival Curves for Prototypical Subjects")
+lines(nodash_curve, col = "red", lty = 2)
+
+```
+
 (h) Summarize the results above in 6 or fewer sentence: does the DASH diet seem to be a promising intervention to reduce all-cause mortality?  Why or why not?  
+  
+  
+
+ 
   
   
 \vspace{0.3in}
