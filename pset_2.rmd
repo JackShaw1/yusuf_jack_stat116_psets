@@ -31,9 +31,12 @@ $$\hat{F}(t)=\prod_{j|t_j\leq t} \frac{n_j-d_j}{n_j}$$
 (a) Show that this reduces to $\hat{F}(t) = \sum_{i=1}^n\mathbf{1}(t_j\geq t)/n$ when there is no censoring (where $\mathbf{1}(t_j\geq t)$ is the indicator function for whether the $j^{th}$ time-to-event measurement is greater than the time $t$ being considered).
 
 $$\hat{F}(t)=\prod_{j|t_j\leq t} \frac{n_j-d_j}{n_j} = (\frac{n-1}{n})(\frac{n-2}{n-1})...(\frac{n-\sum_{j=1}^{t}d_j}{n-\sum_{j=1}^{t}d_j+1})$$
-$$= \hat{F}(t)=\prod_{j|t_j\leq t} \frac{n_j-d_j}{n_j} = (\frac{n-\sum_{j=1}^{t}d_j}{n})$$
+$$= (\frac{n-\sum_{j=1}^{t}d_j}{n})$$
 
+__Since the numerator is the number of people that have not been diseased from the initial population, this simplifies to...__
 
+$$= \boxed{\sum_{i=1}^n\mathbf{1}(t_j\geq t)/n}$$
+__Because if an individual's measured time to event is greater than t, they have not been diseased yet and thus this indicator will equal 1. __
 
 The asymptotic variance of $\hat{F}(t)$ is estimated by:
 $$\widehat{Var}\left[ \hat{F}(t)\right]=\hat{F}^2(t)\cdot \sum_{j|t_j\leq t} \frac{d_j}{n_j(n_j-d_j)}$$
