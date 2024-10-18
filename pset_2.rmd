@@ -39,6 +39,7 @@ $$\widehat{Var}\left[ \hat{F}(t)\right] = \frac{\hat{F}(t)\cdot [1-\hat{F}(t)]}{
 
 (c) What well-known distribution is this simplified variance expression based on? Why does this simplified version make sense?
 
+This simplified variance is based on the Binomial distribution (Variance p*(1-p)/n). This makes sense because if there is no censoring, then we are essentially looking at the survival time of every different person at any given time as a Bernouli (any individual either has had the event or has not had the event at time) and therefore the collective survival curve is like a Binomial. 
 
 \vspace{0.3in}
 
