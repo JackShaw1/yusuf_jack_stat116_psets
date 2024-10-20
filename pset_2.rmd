@@ -81,8 +81,6 @@ library(tidyverse)
 
 (a) Who's more likely to be on the DASH `diet`?  Answer this question with regards to `race`, `age`, `bmi`, and `mi`.  Please provide visuals and/or summary statistics to address this question -- there is no need to formalize this with CIs or hypothesis test.  Summarize what you find in 4 or fewer sentences.
 
-(a) Who's more likely to be on the DASH `diet`?  Answer this question with regards to `race`, `age`, `bmi`, and `mi`.  Please provide visuals and/or summary statistics to address this question -- there is no need to formalize this with CIs or hypothesis test.  Summarize what you find in 4 or fewer sentences.
-
 ```{r}
 prop.table(table(dash$race, dash$diet),margin=2)
 
@@ -185,7 +183,6 @@ lines(nodash_curve,col="red")
 
 The Dash diet does seem to be a potential intervention, but further research is likely needed. Looking at our two models, diet assignment does have a significant association with outcome when controlling only for heart conditions, but when we added all the covariates, it does not have a significant association (although it is close with a p-value not too far above 0.05). Additionally, when we plot the survival curves for a prototypical individual on each treatment, we can see that the individual on Dash does have a survival curve above the curve for the individual with no Dash diet. However, the Confidence Intervals overlap, which reinforces our finding that the association was not significant. That being said because there was some technically insignificant difference between the two, there may be potential for the Dash diet in future research if some changes to the study are made. 
   
- 
   
   
 \vspace{0.3in}
