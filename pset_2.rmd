@@ -1,6 +1,6 @@
 ---
 title: "Problem Set 2: Survival"
-author: "Statistics 116 Teaching Staff"
+author: "Yusuf Mian and Jack Shaw"
 date: "Due: October 21, 2024"
 output: pdf_document
 ---
@@ -31,12 +31,18 @@ $$\hat{F}(t)=\prod_{j|t_j\leq t} \frac{n_j-d_j}{n_j}$$
 (a) Show that this reduces to $\hat{F}(t) = \sum_{i=1}^n\mathbf{1}(t_j\geq t)/n$ when there is no censoring (where $\mathbf{1}(t_j\geq t)$ is the indicator function for whether the $j^{th}$ time-to-event measurement is greater than the time $t$ being considered).
 
 $$\hat{F}(t)=\prod_{j|t_j\leq t} \frac{n_j-d_j}{n_j} = (\frac{n-1}{n})(\frac{n-2}{n-1})...(\frac{n-\sum_{j=1}^{t}d_j}{n-\sum_{j=1}^{t}d_j+1})$$
+
+
 $$= (\frac{n-\sum_{j=1}^{t}d_j}{n})$$
 
-__Since the numerator is the number of people that have not been diseased from the initial population, this simplifies to...__
+__Since the numerator is the number of people that have not been diseased/died from the initial population (total - those who have, this simplifies to:__
 
 $$= \boxed{\sum_{i=1}^n\mathbf{1}(t_j\geq t)/n}$$
-__Because if an individual's measured time to event is greater than t, they have not been diseased yet and thus this indicator will equal 1. __
+
+__Because if an individual's measured time to event is greater than t, they have not been diseased yet and thus this indicator will equal 1.__
+
+
+
 
 The asymptotic variance of $\hat{F}(t)$ is estimated by:
 $$\widehat{Var}\left[ \hat{F}(t)\right]=\hat{F}^2(t)\cdot \sum_{j|t_j\leq t} \frac{d_j}{n_j(n_j-d_j)}$$
@@ -63,9 +69,12 @@ $$\frac{\frac{n^2 - nt}{n^2} - \frac{n^2 - 2nt + t^2}{n^2}}{n} = \frac{\frac{n-t
 
 $$= \frac{\frac{n-t}{n} - (\frac{n-t}{n})^2}{n} = \frac{(\frac{n-t}{n})(1 - \frac{n-t}{n})}{n} = \boxed{\frac{F(t) (1 - F(t))}{n}}$$
 
+
+
 (c) What well-known distribution is this simplified variance expression based on? Why does this simplified version make sense?
 
-This simplified variance is based on a Binomial distribution (look at the Variances). This makes sense because if there is no censoring, then we are essentially looking at the survival time of every different person at any given time as a Bernouli (any individual either has had the event or has not had the event at time) and therefore the collective survival curve is like a Binomial.
+__This simplified variance is based on a Binomial distribution (look at the Variances). This makes sense because if there is no censoring, then we are essentially looking at the survival time of every different person at any given time as a Bernouli (any individual either has had the event or has not had the event at time) and therefore the collective survival curve is like a Binomial.__
+
 
 \vspace{0.3in}
 
@@ -111,7 +120,7 @@ prop.table(table(dash$mi, dash$diet),margin=2)
 
 ```
 
-For race, we can see that the Dash diet group has a larger proportion of Hispanic,White, and Multiracial people and a much lower proportion of Black people than the non-Dash diet group. For age, we can see that the two groups are roughly similar, although the dash diet group is a little bit older in general. For BMI, we can see that the Dash diet seems to have slightly lower mean amd median BMI than the non-DASH diet group and also a much lower Max. For MI, we can see that the two groups are roughly the same (the Dash diet has a slightly higher proportion of people who have had Myocardial Infarction).  
+__For race, we can see that the Dash diet group has a larger proportion of Hispanic,White, and Multiracial people and a much lower proportion of Black people than the non-Dash diet group. For age, we can see that the two groups are roughly similar, although the dash diet group is a little bit older in general. For BMI, we can see that the Dash diet seems to have slightly lower mean amd median BMI than the non-DASH diet group and also a much lower Max. For MI, we can see that the two groups are roughly the same (the Dash diet has a slightly higher proportion of people who have had Myocardial Infarction). __ 
 
 (b) Plot the 2 empirical survival curves on the same graph (same set of axes): (i) for those on the DASH diet and (ii) for those not on the DASH diet.  Interpret what you notice in 4 or fewer sentences.
 
@@ -119,7 +128,7 @@ For race, we can see that the Dash diet group has a larger proportion of Hispani
 kapmei <- survfit(Surv(time,status)~diet,data=dash)
 plot(survfit(Surv(time,status)~diet,data=dash),col=c("red","blue"))
 ```
-As we can see, as time progresses the Dash diet group curve is consistently above the other curve, suggesting they do have a higher probability of survival. This difference is more pronounced towards the end. 
+__As we can see, as time progresses the Dash diet group curve (in Blue) is consistently above the other curve, suggesting they do have a higher probability of survival. This difference is more pronounced towards the end. __
 
 (c) Use a log-rank test to determine whether there is evidence of a true difference in the survival function comparing those on the DASH diet vs. those not on the DASH diet.  Perform a formal hypothesis test at the $\alpha = 0.05$ level and provide an associated and interpretable confidence interval for assessing these hypotheses. 
 
@@ -129,7 +138,7 @@ survdiff(Surv(time,status)~diet,data=dash)
 summary(coxph(Surv(time, status) ~ diet, data = dash))
 ```
 
-As we can see, our p-value is 0.08 and therefore we fail to reject the null hypothesis and there is not a statistically significant different in survival between the two groups. This is also seen in our confidence interval, 0.666 to 1.022, which contains 1 and therefore represents that there is not a statistically significant difference between the two groups.   
+__As we can see, our p-value is 0.08 and therefore we fail to reject the null hypothesis and there is not a statistically significant different in survival between the two groups. This is also seen in our confidence interval, 0.666 to 1.022, which contains 1 and therefore represents that there is not a statistically significant difference between the two groups.   __
 
 
 (d) It is thought that those at high-risk for cardiac events -- as measured by a history of myocardial infarction (`mi`), congestive heart failure (`chf`), or elevated blood pressure (`bp`) -- are more likely to be on the DASH diet due to doctor's recommendation, and are expected to have higher all cause mortality rates due to their conditions.  Use a Cox Proportional Hazards model  (call it `cox1`) to assess whether there is an association of survival with `diet` after controlling for these 3 factors.  Summarize what you notice in 4 or fewer sentences.
@@ -138,7 +147,7 @@ As we can see, our p-value is 0.08 and therefore we fail to reject the null hypo
 cox1 <- coxph(Surv(time, status) ~ diet + mi + chf + bp, data = dash)
 summary(cox1)
 ```
-As we can see in the output, our p-value is now low and  we can reject the null. This tells us that after controlling for mi, chf, and bp, the dash diet is statistically significantly positively associated with survival. This is confirmed by our confidence interval, which now no lonnger contains 1, and our p-values. We can also see that all three of our covariates are statistically significant when controlling for the other covariates and diet.  
+__As we can see in the output, our p-value is now low and  we can reject the null. This tells us that after controlling for mi, chf, and bp, the dash diet is statistically significantly positively associated with survival. This is confirmed by our confidence interval, which now no lonnger contains 1, and our p-values. We can also see that all three of our covariates are statistically significant when controlling for the other covariates and diet.  __
 
 
 (e) There are potentially other measured factors that may be confounding this relationship as well (`age`, `sex`, `race`, `bmi`, and `activity`).  Use a Cox Proportional Hazards model (`cox2`) to assess whether there is an association of survival with `diet` after controlling for the 8 mentioned covariates (the 5 listed here and the 3 from the previous part).  Summarize what you notice in 4 or fewer sentences.
@@ -149,7 +158,7 @@ summary(cox2)
 
 ```
 
-As we can see, our p-value for the diet variable is above 0.05 and therefore we fail to reject the null. We can not conclude that there is a statistically significant association between the Dash diet and survival when controlling for all 8 of these covariates of interest. However, a lot of these covariates are statistically significant when controlling for the others (all except bp). 
+__As we can see, our p-value for the diet variable is above 0.05 and therefore we fail to reject the null. We can not conclude that there is a statistically significant association between the Dash diet and survival when controlling for all 8 of these covariates of interest. However, a lot of these covariates are statistically significant when controlling for the others (all except bp). __
 
 (f) Assess the proportional hazards assumptions in `cox2` using diagnostic plots (hint, the R function `cox.zph` may be helpful).  Comments on what you notice in 4 or fewer sentences.
 
@@ -158,7 +167,7 @@ cox.zph(cox2)
 plot(cox.zph(cox2))
 ```
 
-Firstly, we can see that from the p-values alone, there are potential violations for the covariates given that MI, age, sex, and bmi all have p-values below 0.05. However, actually looking at the plots, there don't seem to be major concerns that would lead us to think that our covariates have violations.
+__Firstly, we can see that from the p-values alone, there are some potential violations to our proportional hazards assumptions for the covariates given that MI, age, sex, and bmi all have p-values below 0.05. However, actually looking at the plots, there don't seem to be major concerns that would lead us to think that our covariates have violations. __
 
 
 (g) For the `cox2` model, provide two estimated survival curves for the *prototypical* subject in the dataset: one curve if they are on the DASH diet and a second curve if they are not on the DASH diet.  Note: this *prototypical* subject should have the median value for all numeric covariates and the most common response for all categorical covariates other than `diet`. 
@@ -199,8 +208,7 @@ lines(nodash_curve,col="red")
 
 (h) Summarize the results above in 6 or fewer sentence: does the DASH diet seem to be a promising intervention to reduce all-cause mortality?  Why or why not? 
 
-The Dash diet does seem to be a potential intervention, but further research is likely needed. Looking at our two models, diet assignment does have a significant association with outcome when controlling only for heart conditions, but when we added all the covariates, it does not have a significant association (although it is close with a p-value not too far above 0.05). Additionally, when we plot the survival curves for a prototypical individual on each treatment, we can see that the individual on Dash does have a survival curve above the curve for the individual with no Dash diet. However, the Confidence Intervals overlap, which reinforces our finding that the association was not significant. That being said because there was some technically insignificant difference between the two, there may be potential for the Dash diet in future research if some changes to the study are made. 
-  
+__The Dash diet does seem to be a potential intervention, but further research is likely needed. Looking at our two models, diet assignment does have a significant association with outcome when controlling only for heart conditions, but when we added all the covariates, it does not have a significant association (although it is close with a p-value not too far above 0.05). Additionally, when we plot the survival curves for a prototypical individual on each treatment, we can see that the individual on Dash does have a survival curve above the curve for the individual with no Dash diet. However, the Confidence Intervals overlap, which reinforces our finding that the association was not significant. That being said because there was some technically insignificant difference between the two, there may be potential for the Dash diet in future research if some changes to the study are made. __
   
   
 \vspace{0.3in}
@@ -216,9 +224,9 @@ Note: a Weibull distribution can be shown to have mean $\frac{\Gamma(1+1/k)}{\la
 
 For this problem, we will sample from two Weibull distributions to mimic uncensored time-to-event data for control and treatment groups, and then assess any differences in *average* survival time via a Cox proportional hazards model.  
 
-Assume that the control group observations are sampled independently from a Weibull($k_1=1,\ \lambda_1$) distribution  and the active treatment group observations are sampled from a Weibull($k_2,\ c\cdot\lambda_1$) 
+Assume that the control group observations are sampled independently from a Weibull($k_1=1,\ \lambda_1$) distribution  and the active treatment group observations are sampled from a ($k_2,\ c\cdot\lambda_1$) 
 
-(a) Determine the value of $c$ that will make the expected value of the two Weibull distributions equal (you can leave it in terms of the $\Gamma$ function).  Use this value of $c$ through the simulations below.
+((a) Determine the value of $c$ that will make the expected value of the two Weibull distributions equal (you can leave it in terms of the $\Gamma$ function).  Use this value of $c$ through the simulations below.
 
 $$\frac{\Gamma(2)}{\lambda_1} = \frac{\Gamma(1+1/k_2)}{c \lambda_1}$$
 $$\Gamma(2) = \frac{\Gamma(1+1/k_2)}{c}$$
@@ -346,4 +354,3 @@ cat("Average CI width: ", result_smaller$avg_width, "\n")
 (d) Interpret the results: How does a violation of proportional hazard assumption affect the coverage probability and width of the 95% confidence interval?  How does sample size affect the results?  What does this mean for Type 1 and Type 2 error rates?  
 
 __A violation of the proportional hazard assumption generally decreases the coverage probability and increases the width of the CI. For larger sample sizes, the coverage was far worse for the violation of porportional hazard assumption condition. However, the CI width dropped significantly. Increasing the sample size seems to increase the Type II error rate but decrease the Type I error rate.__
-
