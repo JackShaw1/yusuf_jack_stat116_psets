@@ -45,6 +45,24 @@ $$\widehat{Var}\left[ \hat{F}(t)\right]=\hat{F}^2(t)\cdot \sum_{j|t_j\leq t} \fr
 (b) Show that this variance expression simplifies to the following formula when there is no censoring:
 $$\widehat{Var}\left[ \hat{F}(t)\right] = \frac{\hat{F}(t)\cdot [1-\hat{F}(t)]}{n}$$
 
+$$= F(t)^2 \cdot (\frac{1}{n(n-1)} + \frac{1}{(n-1)(n-2)} + ...)$$
+$$= F(t)^2 \cdot (\frac{t}{n(n-t)})$$
+__and from part a we know...__
+
+$$F(t) = \frac{n - \sum d_j}{n} = \frac{n - t}{n}$$
+
+__so simplifying...__
+
+$$= (\frac{n - t}{n})^2 \cdot (\frac{t}{n(n-t)}) = \frac{t(n-t)}{n^3}$$
+
+__Now, let's work backwards...__
+
+$$= \frac{nt-t^2}{n^3} = \frac{n^2 - nt - n^2 + 2nt - t^2}{n^3}$$
+
+$$\frac{\frac{n^2 - nt}{n^2} - \frac{n^2 - 2nt + t^2}{n^2}}{n} = \frac{\frac{n-t}{n} - \frac{n^2 - 2nt + t^2}{n^2}}{n}$$
+
+$$= \frac{\frac{n-t}{n} - (\frac{n-t}{n})^2}{n} = \frac{(\frac{n-t}{n})(1 - \frac{n-t}{n})}{n} = \boxed{\frac{F(t) (1 - F(t))}{n}}$$
+
 (c) What well-known distribution is this simplified variance expression based on? Why does this simplified version make sense?
 
 This simplified variance is based on a Binomial distribution (look at the Variances). This makes sense because if there is no censoring, then we are essentially looking at the survival time of every different person at any given time as a Bernouli (any individual either has had the event or has not had the event at time) and therefore the collective survival curve is like a Binomial.
