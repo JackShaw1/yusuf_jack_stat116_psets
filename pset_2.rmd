@@ -13,6 +13,7 @@ output: pdf_document
 		
 \noindent This assignment is \textbf{due Monday, October 21 at 11:59pm}, handed into the course website on Canvas through the ``Assignments'' section of the website (\textbf{provide both the pdf and rmd files}).  Show your work and provide clear, convincing, and succinct explanations when asked.  \textbf{Incorporate the \underline{relevant} R output in this R markdown file}; choose the included R wisely. Only the key output should be displayed for each problem and the relevant parts should be \textbf{highlighted} in some way.  Make sure that you write-up any interpretation of R-code in your own words (don't just provide the output).
 
+__Collaborated with Amelia Heymach__
 
 \vspace{0.1in}
 
@@ -21,7 +22,6 @@ output: pdf_document
 \end{small}
 	
 \vspace{0.3in}	
-
 
 **Problem 1: Like Flipping Coins** 
 
